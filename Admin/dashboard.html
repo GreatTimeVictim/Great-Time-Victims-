@@ -1,0 +1,3062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | GTV Admin</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        /* ==========================================
+                EVENT FORM
+        ========================================== */
+
+        .event-form-container{
+            display:none;
+            background:#FFF8FC;
+            border:1px solid #eeeeee;
+            border-radius:18px;
+            padding:25px;
+            margin-bottom:25px;
+        }
+
+        .event-form-container.show{
+            display:block;
+        }
+
+        .event-form-title{
+            color:#232B8B;
+            font-size:20px;
+            font-weight:700;
+            margin-bottom:20px;
+        }
+
+        .event-form{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:18px;
+        }
+
+        .form-group{
+            display:flex;
+            flex-direction:column;
+        }
+
+        .form-group.full{
+            grid-column:1 / -1;
+        }
+
+        .form-group label{
+            color:#232B8B;
+            font-size:13px;
+            font-weight:600;
+            margin-bottom:7px;
+        }
+
+        .form-group input,
+        .form-group textarea{
+            width:100%;
+            padding:13px 14px;
+            border:2px solid #eeeeee;
+            border-radius:10px;
+            outline:none;
+            font-family:'Poppins',sans-serif;
+            font-size:13px;
+            background:#ffffff;
+            transition:.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus{
+            border-color:#F49AC2;
+            box-shadow:0 0 8px rgba(244,154,194,.18);
+        }
+
+        .form-group textarea{
+            min-height:120px;
+            resize:vertical;
+        }
+
+        .form-actions{
+            grid-column:1 / -1;
+            display:flex;
+            gap:10px;
+            margin-top:5px;
+        }
+
+        .cancel-btn{
+            background:#ffffff;
+            color:#777;
+            border:1px solid #dddddd;
+            padding:11px 20px;
+            border-radius:30px;
+            font-family:'Poppins',sans-serif;
+            font-size:12px;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .cancel-btn:hover{
+            background:#eeeeee;
+        }
+
+
+        /* ==========================================
+                EVENTS GRID
+        ========================================== */
+
+        .events-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:20px;
+        }
+
+        .admin-event-card{
+            background:#ffffff;
+            border:1px solid #eeeeee;
+            border-radius:16px;
+            overflow:hidden;
+            box-shadow:0 6px 18px rgba(0,0,0,.05);
+            transition:.3s;
+        }
+
+        .admin-event-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 12px 25px rgba(0,0,0,.09);
+        }
+
+        .admin-event-image{
+            width:100%;
+            height:180px;
+            object-fit:cover;
+            display:block;
+        }
+
+        .admin-event-content{
+            padding:18px;
+        }
+
+        .admin-event-content h3{
+            color:#232B8B;
+            font-size:17px;
+            margin-bottom:10px;
+        }
+
+        .event-detail{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            color:#777;
+            font-size:11px;
+            margin-bottom:7px;
+        }
+
+        .event-detail i{
+            color:#F49AC2;
+            width:15px;
+        }
+
+        .admin-event-description{
+            color:#666;
+            font-size:12px;
+            line-height:1.6;
+            margin:12px 0;
+        }
+
+        .event-card-actions{
+            display:flex;
+            gap:8px;
+            margin-top:15px;
+        }
+
+        .edit-event-btn,
+        .delete-event-btn{
+            flex:1;
+            border:none;
+            padding:9px;
+            border-radius:8px;
+            font-family:'Poppins',sans-serif;
+            font-size:11px;
+            font-weight:600;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .edit-event-btn{
+            background:#EEF0FF;
+            color:#232B8B;
+        }
+
+        .edit-event-btn:hover{
+            background:#232B8B;
+            color:#ffffff;
+        }
+
+        .delete-event-btn{
+            background:#FFF0F7;
+            color:#e91e63;
+        }
+
+        .delete-event-btn:hover{
+            background:#e91e63;
+            color:#ffffff;
+        }
+
+
+        /* ==========================================
+                EVENT MESSAGE
+        ========================================== */
+
+        .event-message{
+            display:none;
+            padding:12px 15px;
+            border-radius:10px;
+            margin-bottom:18px;
+            font-size:12px;
+            font-weight:500;
+        }
+
+        .event-message.show{
+            display:block;
+        }
+
+        .event-message.success{
+            background:#eaf8f0;
+            color:#198754;
+        }
+
+
+        /* ==========================================
+                MOBILE EVENTS
+        ========================================== */
+
+        @media(max-width:1000px){
+
+            .events-grid{
+                grid-template-columns:repeat(2,1fr);
+            }
+
+        }
+
+        @media(max-width:650px){
+
+            .event-form{
+                grid-template-columns:1fr;
+            }
+
+            .form-group.full{
+                grid-column:auto;
+            }
+
+            .form-actions{
+                grid-column:auto;
+            }
+
+            .events-grid{
+                grid-template-columns:1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+        ADMIN DASHBOARD
+========================================== -->
+
+<div class="admin-container">
+
+
+    <!-- ==========================================
+            SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <img src="../images/logo.png"
+                 alt="Great Time Victims Logo">
+
+            <div>
+
+                <h2>GTV Admin</h2>
+
+                <p>Administration</p>
+
+            </div>
+
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <a href="dashboard.html" class="active">
+
+                <i class="fas fa-chart-line"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+            <a href="#events">
+
+                <i class="fas fa-calendar-days"></i>
+
+                <span>Events</span>
+
+            </a>
+
+            <a href="#messages">
+
+                <i class="fas fa-envelope"></i>
+
+                <span>Messages</span>
+
+            </a>
+
+            <a href="#donations">
+
+                <i class="fas fa-hand-holding-heart"></i>
+
+                <span>Donations</span>
+
+            </a>
+
+            <a href="#volunteers">
+
+                <i class="fas fa-users"></i>
+
+                <span>Volunteers</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="../index.html" target="_blank">
+
+                <i class="fas fa-globe"></i>
+
+                <span>View Website</span>
+
+            </a>
+
+            <a href="Admin.html" class="logout-link" id="logoutBtn">
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ==========================================
+            MAIN CONTENT
+    =========================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="menu-btn" id="menuBtn">
+
+                    <i class="fas fa-bars"></i>
+
+                </button>
+
+                <div>
+
+                    <h1>Dashboard</h1>
+
+                    <p>Welcome to the GTV Administration Panel</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-icon">
+
+                    <i class="fas fa-user-shield"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>Administrator</strong>
+
+                    <small>GTV Admin</small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-section">
+
+            <div>
+
+                <h2>Welcome Back, Admin 👋</h2>
+
+                <p>
+                    Manage Great Time Victims activities,
+                    messages, donations and volunteers from here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==========================================
+                STATISTICS
+        =========================================== -->
+
+        <section class="statistics">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+
+                    <i class="fas fa-calendar-days"></i>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Events</span>
+
+                    <h3 id="eventCount">0</h3>
+
+                    <a href="#events">Manage Events</a>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon pink">
+
+                    <i class="fas fa-envelope"></i>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Messages</span>
+
+                    <h3 id="messageCount">0</h3>
+
+                    <a href="#messages">View Messages</a>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon light-blue">
+
+                    <i class="fas fa-hand-holding-heart"></i>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Donations</span>
+
+                    <h3 id="donationCount">0</h3>
+
+                    <a href="#donations">View Donations</a>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+
+                    <i class="fas fa-users"></i>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Volunteers</span>
+
+                    <h3 id="volunteerCount">0</h3>
+
+                    <a href="#volunteers">View Volunteers</a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==========================================
+                QUICK ACTIONS
+        =========================================== -->
+
+        <section class="section-block">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Quick Actions</h2>
+
+                    <p>Manage important GTV activities.</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+                <a href="#events"
+                   class="action-card"
+                   id="quickAddEvent">
+
+                    <div>
+
+                        <i class="fas fa-calendar-plus"></i>
+
+                    </div>
+
+                    <span>Add Event</span>
+
+                    <small>Create a new GTV event</small>
+
+                </a>
+
+
+                <a href="#messages" class="action-card">
+
+                    <div>
+
+                        <i class="fas fa-envelope-open-text"></i>
+
+                    </div>
+
+                    <span>Messages</span>
+
+                    <small>Check contact messages</small>
+
+                </a>
+
+
+                <a href="#donations" class="action-card">
+
+                    <div>
+
+                        <i class="fas fa-donate"></i>
+
+                    </div>
+
+                    <span>Donations</span>
+
+                    <small>Review donations</small>
+
+                </a>
+
+
+                <a href="#volunteers" class="action-card">
+
+                    <div>
+
+                        <i class="fas fa-user-plus"></i>
+
+                    </div>
+
+                    <span>Volunteers</span>
+
+                    <small>Review applications</small>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==========================================
+                EVENTS
+        =========================================== -->
+
+        <section class="management-section" id="events">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+
+                        <i class="fas fa-calendar-days"></i>
+
+                        Events
+
+                    </h2>
+
+                    <p>Manage GTV events and activities.</p>
+
+                </div>
+
+                <button
+                    class="primary-btn"
+                    id="addEventBtn">
+
+                    <i class="fas fa-plus"></i>
+
+                    Add Event
+
+                </button>
+
+            </div>
+
+
+            <!-- EVENT FORM -->
+
+            <div class="event-form-container" id="eventFormContainer">
+
+                <h3 class="event-form-title" id="formTitle">
+
+                    Add New Event
+
+                </h3>
+
+
+                <div
+                    class="event-message"
+                    id="eventMessage">
+                </div>
+
+
+                <form id="eventForm" class="event-form">
+
+
+                    <div class="form-group">
+
+                        <label for="eventTitle">
+                            Event Title *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="eventTitle"
+                            placeholder="Enter event title"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="eventLocation">
+                            Location *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="eventLocation"
+                            placeholder="Enter event location"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="eventDate">
+                            Event Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="eventDate"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="eventTime">
+                            Event Time
+                        </label>
+
+                        <input
+                            type="time"
+                            id="eventTime">
+
+                    </div>
+<div class="form-group full">
+
+    <label for="eventImage">
+        Event Image
+    </label>
+
+    <input
+        type="file"
+        id="eventImage"
+        accept="image/*"
+    >
+
+    <div id="imagePreviewContainer"
+         style="display:none; margin-top:15px;">
+
+        <img
+            id="imagePreview"
+            src=""
+            alt="Event Image Preview"
+            style="
+                width:180px;
+                height:120px;
+                object-fit:cover;
+                border-radius:12px;
+                border:2px solid #eeeeee;
+                display:block;
+            "
+        >
+
+        <button
+            type="button"
+            id="removeImageBtn"
+            class="cancel-btn"
+            style="margin-top:10px;">
+
+            <i class="fas fa-trash"></i>
+
+            Remove Image
+
+        </button>
+
+    </div>
+
+</div>
+
+
+                    <div class="form-group full">
+
+                        <label for="eventDescription">
+                            Event Description *
+                        </label>
+
+                        <textarea
+                            id="eventDescription"
+                            placeholder="Describe the event..."
+                            required></textarea>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="primary-btn">
+
+                            <i class="fas fa-save"></i>
+
+                            Save Event
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="cancel-btn"
+                            id="cancelEventBtn">
+
+                            Cancel
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- EVENTS DISPLAY -->
+
+            <div id="eventsContainer">
+
+                <div class="empty-state" id="emptyEvents">
+
+                    <i class="fas fa-calendar-xmark"></i>
+
+                    <h3>No Events Yet</h3>
+
+                    <p>
+                        Events added from the admin panel
+                        will appear here.
+                    </p>
+
+                    <button
+                        class="primary-btn"
+                        id="firstEventBtn">
+
+                        <i class="fas fa-plus"></i>
+
+                        Add First Event
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+     <!-- ==========================================
+        MESSAGES
+=========================================== -->
+
+<section class="management-section" id="messages">
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2>
+
+                <i class="fas fa-envelope"></i>
+
+                Messages
+
+                <span id="unreadMessageBadge"
+                      style="
+                        display:none;
+                        background:#F49AC2;
+                        color:#ffffff;
+                        font-size:12px;
+                        padding:4px 9px;
+                        border-radius:20px;
+                        margin-left:8px;
+                      ">
+                </span>
+
+            </h2>
+
+            <p>
+                Messages received through the website.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            class="outline-btn"
+            id="viewAllMessagesBtn">
+
+            View All
+
+        </button>
+
+    </div>
+
+
+    <!-- MESSAGE LIST -->
+
+    <div id="messagesContainer">
+
+        <div class="empty-state">
+
+            <i class="fas fa-inbox"></i>
+
+            <h3>No Messages Yet</h3>
+
+            <p>
+                Contact form submissions will appear here.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+        <!-- ==========================================
+        DONATIONS
+=========================================== -->
+
+<section class="management-section" id="donations">
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2>
+
+                <i class="fas fa-hand-holding-heart"></i>
+
+                Donations
+
+                <span id="donationTotalBadge"
+                      style="
+                        display:none;
+                        background:#F49AC2;
+                        color:#ffffff;
+                        font-size:12px;
+                        padding:4px 9px;
+                        border-radius:20px;
+                        margin-left:8px;
+                      ">
+                </span>
+
+            </h2>
+
+            <p>
+                View and manage donation records.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="outline-btn"
+            id="viewAllDonationsBtn">
+
+            View All
+
+        </button>
+
+    </div>
+
+
+    <!-- DONATIONS LIST -->
+
+    <div id="donationsContainer">
+
+        <div class="empty-state">
+
+            <i class="fas fa-receipt"></i>
+
+            <h3>No Donations Yet</h3>
+
+            <p>
+                Donation submissions will appear here.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+     <!-- ==========================================
+        VOLUNTEERS
+=========================================== -->
+
+<section class="management-section" id="volunteers">
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2>
+
+                <i class="fas fa-users"></i>
+
+                Volunteers
+
+                <span id="volunteerTotalBadge"
+                      style="
+                        display:none;
+                        background:#F49AC2;
+                        color:#ffffff;
+                        font-size:12px;
+                        padding:4px 9px;
+                        border-radius:20px;
+                        margin-left:8px;
+                      ">
+                </span>
+
+            </h2>
+
+            <p>
+                View volunteer applications.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="outline-btn"
+            id="viewAllVolunteersBtn">
+
+            View All
+
+        </button>
+
+    </div>
+
+
+    <!-- VOLUNTEER LIST -->
+
+    <div id="volunteersContainer">
+
+        <div class="empty-state">
+
+            <i class="fas fa-user-clock"></i>
+
+            <h3>No Volunteer Applications Yet</h3>
+
+            <p>
+                Volunteer applications will appear here.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="admin-footer">
+
+            <p>
+                © 2026 Great Time Victims.
+                All Rights Reserved.
+            </p>
+
+            <span>
+                GTV | Girls Supporting Girls
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- MOBILE OVERLAY -->
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+
+<script>
+
+    /* ==========================================
+            MOBILE SIDEBAR
+    =========================================== */
+
+    const menuBtn =
+        document.getElementById("menuBtn");
+
+    const sidebar =
+        document.querySelector(".sidebar");
+
+    const sidebarOverlay =
+        document.getElementById("sidebarOverlay");
+
+
+    menuBtn.addEventListener("click", function(){
+
+        sidebar.classList.toggle("show");
+
+        sidebarOverlay.classList.toggle("show");
+
+    });
+
+
+    sidebarOverlay.addEventListener("click", function(){
+
+        sidebar.classList.remove("show");
+
+        sidebarOverlay.classList.remove("show");
+
+    });
+
+
+    const navLinks =
+        document.querySelectorAll(".admin-nav a");
+
+
+    navLinks.forEach(function(link){
+
+        link.addEventListener("click", function(){
+
+            sidebar.classList.remove("show");
+
+            sidebarOverlay.classList.remove("show");
+
+        });
+
+    });
+
+
+
+    /* ==========================================
+            LOGOUT
+    =========================================== */
+
+    document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function(event){
+
+            event.preventDefault();
+
+            const confirmLogout =
+                confirm("Are you sure you want to logout?");
+
+            if(confirmLogout){
+
+                window.location.href = "Admin.html";
+
+            }
+
+        });
+
+
+
+    /* ==========================================
+            EVENT MANAGEMENT
+    =========================================== */
+
+    const eventFormContainer =
+        document.getElementById("eventFormContainer");
+
+    const eventForm =
+        document.getElementById("eventForm");
+
+    const addEventBtn =
+        document.getElementById("addEventBtn");
+
+    const firstEventBtn =
+        document.getElementById("firstEventBtn");
+
+    const quickAddEvent =
+        document.getElementById("quickAddEvent");
+
+    const cancelEventBtn =
+        document.getElementById("cancelEventBtn");
+
+    const eventsContainer =
+        document.getElementById("eventsContainer");
+
+    const emptyEvents =
+        document.getElementById("emptyEvents");
+
+    const formTitle =
+        document.getElementById("formTitle");
+
+    const eventMessage =
+        document.getElementById("eventMessage");
+
+    const eventCount =
+        document.getElementById("eventCount");
+
+
+    let events =
+        JSON.parse(localStorage.getItem("gtvEvents")) || [];
+
+    let editingEventId = null;
+let selectedEventImage = "";
+/* ==========================================
+        EVENT IMAGE UPLOAD & PREVIEW
+========================================== */
+
+const eventImageInput =
+    document.getElementById("eventImage");
+
+const imagePreviewContainer =
+    document.getElementById("imagePreviewContainer");
+
+const imagePreview =
+    document.getElementById("imagePreview");
+
+const removeImageBtn =
+    document.getElementById("removeImageBtn");
+
+
+eventImageInput.addEventListener(
+    "change",
+    function(){
+
+        const file =
+            this.files[0];
+
+        if(!file){
+
+            return;
+
+        }
+
+
+        /* Limit image size */
+
+        if(file.size > 3 * 1024 * 1024){
+
+            alert(
+                "Please choose an image smaller than 3MB."
+            );
+
+            this.value = "";
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function(e){
+
+            selectedEventImage =
+                e.target.result;
+
+            imagePreview.src =
+                selectedEventImage;
+
+            imagePreviewContainer.style.display =
+                "block";
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+/* ==========================================
+        REMOVE IMAGE
+========================================== */
+
+removeImageBtn.addEventListener(
+    "click",
+    function(){
+
+        selectedEventImage = "";
+
+        eventImageInput.value = "";
+
+        imagePreview.src = "";
+
+        imagePreviewContainer.style.display =
+            "none";
+
+    }
+);
+
+
+
+    /* ==========================================
+            OPEN EVENT FORM
+    =========================================== */
+
+    function openEventForm(){
+
+        eventFormContainer.classList.add("show");
+
+        eventForm.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+
+
+    addEventBtn.addEventListener(
+        "click",
+        function(){
+
+            editingEventId = null;
+
+            formTitle.textContent =
+                "Add New Event";
+
+            eventForm.reset();
+
+            openEventForm();
+
+        }
+    );
+
+
+    firstEventBtn.addEventListener(
+        "click",
+        function(){
+
+            editingEventId = null;
+
+            formTitle.textContent =
+                "Add New Event";
+
+            eventForm.reset();
+
+            openEventForm();
+
+        }
+    );
+
+
+    quickAddEvent.addEventListener(
+        "click",
+        function(){
+
+            setTimeout(function(){
+
+                editingEventId = null;
+
+                formTitle.textContent =
+                    "Add New Event";
+
+                eventForm.reset();
+
+                openEventForm();
+
+            },300);
+
+        }
+    );
+
+
+
+    /* ==========================================
+            CANCEL FORM
+    =========================================== */
+
+    cancelEventBtn.addEventListener(
+        "click",
+        function(){
+
+            eventForm.reset();
+
+            editingEventId = null;
+
+            eventFormContainer.classList.remove("show");
+
+            eventMessage.classList.remove("show");
+
+        }
+    );
+
+
+
+   /* ==========================================
+        SAVE EVENT
+=========================================== */
+
+eventForm.addEventListener(
+    "submit",
+    function(event){
+
+        event.preventDefault();
+
+
+        const title =
+            document.getElementById("eventTitle")
+            .value.trim();
+
+
+        const location =
+            document.getElementById("eventLocation")
+            .value.trim();
+
+
+        const date =
+            document.getElementById("eventDate")
+            .value;
+
+
+        const time =
+            document.getElementById("eventTime")
+            .value;
+
+
+        const image =
+            selectedEventImage;
+
+
+        const description =
+            document.getElementById("eventDescription")
+            .value.trim();
+
+
+
+        /* ==========================================
+                VALIDATE FORM
+        =========================================== */
+
+        if(
+            !title ||
+            !location ||
+            !date ||
+            !description
+        ){
+
+            alert(
+                "Please fill in all required fields."
+            );
+
+            return;
+
+        }
+
+
+
+        /* ==========================================
+                EDIT EXISTING EVENT
+        =========================================== */
+
+        if(editingEventId){
+
+            const index =
+                events.findIndex(
+                    function(item){
+
+                        return item.id === editingEventId;
+
+                    }
+                );
+
+
+            if(index !== -1){
+
+                events[index].title =
+                    title;
+
+                events[index].location =
+                    location;
+
+                events[index].date =
+                    date;
+
+                events[index].time =
+                    time;
+
+                events[index].image =
+                    image;
+
+                events[index].description =
+                    description;
+
+            }
+
+        }
+
+
+
+        /* ==========================================
+                ADD NEW EVENT
+        =========================================== */
+
+        else{
+
+            const newEvent = {
+
+                id:Date.now(),
+
+                title:title,
+
+                location:location,
+
+                date:date,
+
+                time:time,
+
+                image:image,
+
+                description:description
+
+            };
+
+
+            events.push(newEvent);
+
+        }
+
+
+
+        /* ==========================================
+                SAVE TO LOCAL STORAGE
+        =========================================== */
+
+        localStorage.setItem(
+            "gtvEvents",
+            JSON.stringify(events)
+        );
+
+
+
+        /* ==========================================
+                SUCCESS MESSAGE
+        =========================================== */
+
+        eventMessage.textContent =
+            editingEventId
+            ? "Event updated successfully!"
+            : "Event added successfully!";
+
+
+        eventMessage.className =
+            "event-message show success";
+
+
+
+        /* ==========================================
+                RESET FORM
+        =========================================== */
+
+        eventForm.reset();
+
+
+        editingEventId = null;
+
+
+        formTitle.textContent =
+            "Add New Event";
+
+
+        selectedEventImage = "";
+
+
+        imagePreview.src = "";
+
+
+        imagePreviewContainer.style.display =
+            "none";
+
+
+
+        /* ==========================================
+                REFRESH EVENTS
+        =========================================== */
+
+        renderEvents();
+
+
+
+        /* ==========================================
+                CLOSE FORM
+        =========================================== */
+
+        setTimeout(
+            function(){
+
+                eventFormContainer.classList.remove(
+                    "show"
+                );
+
+                eventMessage.classList.remove(
+                    "show"
+                );
+
+            },
+            1200
+        );
+
+    }
+    );
+
+
+
+    /* ==========================================
+            DISPLAY EVENTS
+    =========================================== */
+
+    function renderEvents(){
+
+        eventCount.textContent =
+            events.length;
+
+
+        if(events.length === 0){
+
+            eventsContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    <i class="fas fa-calendar-xmark"></i>
+
+                    <h3>No Events Yet</h3>
+
+                    <p>
+                        Events added from the admin panel
+                        will appear here.
+                    </p>
+
+                    <button
+                        class="primary-btn"
+                        onclick="openNewEvent()">
+
+                        <i class="fas fa-plus"></i>
+
+                        Add First Event
+
+                    </button>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html =
+            '<div class="events-grid">';
+
+
+        events.forEach(function(item){
+
+            let formattedDate =
+                new Date(
+                    item.date + "T00:00:00"
+                ).toLocaleDateString(
+                    "en-US",
+                    {
+                        weekday:"short",
+                        year:"numeric",
+                        month:"short",
+                        day:"numeric"
+                    }
+                );
+
+
+            let imageSource =
+                item.image ||
+                "../images/gallery5.jpg";
+
+
+            html += `
+
+                <article class="admin-event-card">
+
+                    <img
+                        src="${escapeHtml(imageSource)}"
+                        alt="${escapeHtml(item.title)}"
+                        class="admin-event-image"
+                        onerror="this.src='../images/gallery5.jpg'"
+                    >
+
+                    <div class="admin-event-content">
+
+                        <h3>
+                            ${escapeHtml(item.title)}
+                        </h3>
+
+                        <div class="event-detail">
+
+                            <i class="fas fa-calendar"></i>
+
+                            <span>
+                                ${formattedDate}
+                            </span>
+
+                        </div>
+
+
+                        ${item.time ? `
+
+                        <div class="event-detail">
+
+                            <i class="fas fa-clock"></i>
+
+                            <span>
+                                ${escapeHtml(item.time)}
+                            </span>
+
+                        </div>
+
+                        ` : ""}
+
+
+                        <div class="event-detail">
+
+                            <i class="fas fa-location-dot"></i>
+
+                            <span>
+                                ${escapeHtml(item.location)}
+                            </span>
+
+                        </div>
+
+
+                        <p class="admin-event-description">
+
+                            ${escapeHtml(item.description)}
+
+                        </p>
+
+
+                        <div class="event-card-actions">
+
+                            <button
+                                class="edit-event-btn"
+                                onclick="editEvent(${item.id})">
+
+                                <i class="fas fa-pen"></i>
+
+                                Edit
+
+                            </button>
+
+
+                            <button
+                                class="delete-event-btn"
+                                onclick="deleteEvent(${item.id})">
+
+                                <i class="fas fa-trash"></i>
+
+                                Delete
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        });
+
+
+        html += "</div>";
+
+
+        eventsContainer.innerHTML =
+            html;
+
+    }
+
+
+
+    /* ==========================================
+            EDIT EVENT
+    =========================================== */
+
+    function editEvent(id){
+
+        const item =
+            events.find(
+                function(event){
+
+                    return event.id === id;
+
+                }
+            );
+
+
+        if(!item){
+
+            return;
+
+        }
+
+
+        editingEventId = id;
+
+
+        document.getElementById("eventTitle")
+            .value = item.title;
+
+        document.getElementById("eventLocation")
+            .value = item.location;
+
+        document.getElementById("eventDate")
+            .value = item.date;
+
+        document.getElementById("eventTime")
+            .value = item.time || "";
+
+    selectedEventImage =
+    item.image || "";
+
+if(selectedEventImage){
+
+    imagePreview.src =
+        selectedEventImage;
+
+    imagePreviewContainer.style.display =
+        "block";
+
+}
+else{
+
+    imagePreview.src = "";
+
+    imagePreviewContainer.style.display =
+        "none";
+
+}
+
+        document.getElementById("eventDescription")
+            .value = item.description;
+
+
+        formTitle.textContent =
+            "Edit Event";
+
+
+        openEventForm();
+
+    }
+
+
+
+    /* ==========================================
+            DELETE EVENT
+    =========================================== */
+
+    function deleteEvent(id){
+
+        const item =
+            events.find(
+                function(event){
+
+                    return event.id === id;
+
+                }
+            );
+
+
+        if(!item){
+
+            return;
+
+        }
+
+
+        const confirmDelete =
+            confirm(
+                'Delete "' +
+                item.title +
+                '"?'
+            );
+
+
+        if(!confirmDelete){
+
+            return;
+
+        }
+
+
+        events =
+            events.filter(
+                function(event){
+
+                    return event.id !== id;
+
+                }
+            );
+
+
+        localStorage.setItem(
+            "gtvEvents",
+            JSON.stringify(events)
+        );
+
+
+        renderEvents();
+
+    }
+
+
+
+    /* ==========================================
+            NEW EVENT FROM EMPTY STATE
+    =========================================== */
+
+    function openNewEvent(){
+
+        editingEventId = null;
+
+        eventForm.reset();
+selectedEventImage = "";
+
+imagePreview.src = "";
+
+imagePreviewContainer.style.display = "none";
+
+        formTitle.textContent =
+            "Add New Event";
+
+        openEventForm();
+
+    }
+
+
+
+    /* ==========================================
+            BASIC HTML SAFETY
+    =========================================== */
+
+    function escapeHtml(value){
+
+        return String(value)
+            .replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;")
+            .replace(/'/g,"&#039;");
+
+    }
+
+
+
+    /* ==========================================
+            INITIAL LOAD
+    =========================================== */
+
+    renderEvents();
+/* ==========================================
+        MESSAGES
+========================================== */
+
+const messagesContainer =
+    document.getElementById("messagesContainer");
+
+const messageCount =
+    document.getElementById("messageCount");
+
+const unreadMessageBadge =
+    document.getElementById("unreadMessageBadge");
+
+const viewAllMessagesBtn =
+    document.getElementById("viewAllMessagesBtn");
+
+
+/* ==========================================
+        LOAD MESSAGES
+========================================== */
+
+function getMessages(){
+
+    return JSON.parse(
+        localStorage.getItem("gtvMessages")
+    ) || [];
+
+}
+
+
+/* ==========================================
+        DISPLAY MESSAGES
+========================================== */
+
+function renderMessages(){
+
+    const messages =
+        getMessages();
+
+
+    /* TOTAL MESSAGE COUNT */
+
+    messageCount.textContent =
+        messages.length;
+
+
+    /* UNREAD COUNT */
+
+    const unreadMessages =
+        messages.filter(function(message){
+
+            return !message.read;
+
+        });
+
+
+    if(unreadMessages.length > 0){
+
+        unreadMessageBadge.style.display =
+            "inline-block";
+
+        unreadMessageBadge.textContent =
+            unreadMessages.length + " unread";
+
+    }
+
+    else{
+
+        unreadMessageBadge.style.display =
+            "none";
+
+    }
+
+
+    /* NO MESSAGES */
+
+    if(messages.length === 0){
+
+        messagesContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fas fa-inbox"></i>
+
+                <h3>No Messages Yet</h3>
+
+                <p>
+                    Contact form submissions will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* CREATE MESSAGE LIST */
+
+    messagesContainer.innerHTML = "";
+
+
+    messages.forEach(function(message){
+
+        const messageCard =
+            document.createElement("div");
+
+
+        messageCard.className =
+            "admin-message-card";
+
+
+        if(!message.read){
+
+            messageCard.classList.add(
+                "unread-message"
+            );
+
+        }
+
+
+        messageCard.innerHTML = `
+
+            <div class="message-card-header">
+
+                <div class="message-sender">
+
+                    <div class="message-avatar">
+
+                        <i class="fas fa-user"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            ${escapeMessageHTML(
+                                message.firstName
+                            )}
+                            ${escapeMessageHTML(
+                                message.lastName
+                            )}
+                        </h3>
+
+                        <small>
+
+                            ${escapeMessageHTML(
+                                message.email
+                            )}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <span class="message-date">
+
+                    ${escapeMessageHTML(
+                        message.date
+                    )}
+
+                </span>
+
+            </div>
+
+
+            <div class="message-details">
+
+                <p>
+
+                    <strong>Phone:</strong>
+
+                    ${escapeMessageHTML(
+                        message.phone
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Subject:</strong>
+
+                    ${escapeMessageHTML(
+                        message.subject
+                    )}
+
+                </p>
+
+            </div>
+
+
+            <div class="message-body">
+
+                ${escapeMessageHTML(
+                    message.message
+                )}
+
+            </div>
+
+
+            <div class="message-actions">
+
+                <button
+                    type="button"
+                    class="message-read-btn"
+                    onclick="toggleMessageRead(${message.id})">
+
+                    <i class="fas fa-eye"></i>
+
+                    ${message.read
+                        ? "Mark Unread"
+                        : "Mark Read"}
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="message-delete-btn"
+                    onclick="deleteMessage(${message.id})">
+
+                    <i class="fas fa-trash"></i>
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        messagesContainer.appendChild(
+            messageCard
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+        MARK READ / UNREAD
+========================================== */
+
+function toggleMessageRead(id){
+
+    const messages =
+        getMessages();
+
+
+    const message =
+        messages.find(function(item){
+
+            return item.id === id;
+
+        });
+
+
+    if(!message){
+
+        return;
+
+    }
+
+
+    message.read =
+        !message.read;
+
+
+    localStorage.setItem(
+        "gtvMessages",
+        JSON.stringify(messages)
+    );
+
+
+    renderMessages();
+
+}
+
+
+/* ==========================================
+        DELETE MESSAGE
+========================================== */
+
+function deleteMessage(id){
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this message?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    let messages =
+        getMessages();
+
+
+    messages =
+        messages.filter(function(message){
+
+            return message.id !== id;
+
+        });
+
+
+    localStorage.setItem(
+        "gtvMessages",
+        JSON.stringify(messages)
+    );
+
+
+    renderMessages();
+
+}
+
+
+/* ==========================================
+        VIEW ALL BUTTON
+========================================== */
+
+viewAllMessagesBtn.addEventListener(
+    "click",
+    function(){
+
+        document
+            .getElementById("messages")
+            .scrollIntoView({
+                behavior:"smooth"
+            });
+
+    }
+);
+
+
+/* ==========================================
+        BASIC HTML SAFETY
+========================================== */
+
+function escapeMessageHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+        LOAD MESSAGES ON PAGE LOAD
+========================================== */
+
+renderMessages();
+
+/* ==========================================
+        DONATIONS
+========================================== */
+
+const donationsContainer =
+    document.getElementById("donationsContainer");
+
+const donationCount =
+    document.getElementById("donationCount");
+
+const donationTotalBadge =
+    document.getElementById("donationTotalBadge");
+
+const viewAllDonationsBtn =
+    document.getElementById("viewAllDonationsBtn");
+
+
+/* ==========================================
+        GET DONATIONS
+========================================== */
+
+function getDonations(){
+
+    return JSON.parse(
+        localStorage.getItem("gtvDonations")
+    ) || [];
+
+}
+
+
+/* ==========================================
+        DISPLAY DONATIONS
+========================================== */
+
+function renderDonations(){
+
+    const donations =
+        getDonations();
+
+
+    /* TOTAL DONATION RECORDS */
+
+    donationCount.textContent =
+        donations.length;
+
+
+    /* BADGE */
+
+    if(donations.length > 0){
+
+        donationTotalBadge.style.display =
+            "inline-block";
+
+        donationTotalBadge.textContent =
+            donations.length + " donation" +
+            (donations.length === 1 ? "" : "s");
+
+    }
+
+    else{
+
+        donationTotalBadge.style.display =
+            "none";
+
+    }
+
+
+    /* NO DONATIONS */
+
+    if(donations.length === 0){
+
+        donationsContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fas fa-receipt"></i>
+
+                <h3>No Donations Yet</h3>
+
+                <p>
+                    Donation submissions will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* CLEAR CONTAINER */
+
+    donationsContainer.innerHTML = "";
+
+
+    /* DISPLAY DONATIONS */
+
+    donations.forEach(function(donation){
+
+        const donationCard =
+            document.createElement("div");
+
+
+        donationCard.className =
+            "admin-donation-card";
+
+
+        donationCard.innerHTML = `
+
+            <div class="donation-card-header">
+
+                <div class="donor-info">
+
+                    <div class="donor-avatar">
+
+                        <i class="fas fa-heart"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            ${escapeDonationHTML(
+                                donation.name
+                            )}
+                        </h3>
+
+                        <small>
+
+                            ${escapeDonationHTML(
+                                donation.email
+                            )}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="donation-amount">
+
+                    UGX
+                    ${formatDonationAmount(
+                        donation.amount
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <div class="donation-details">
+
+                <div>
+
+                    <strong>
+                        <i class="fas fa-phone"></i>
+                        Phone
+                    </strong>
+
+                    <span>
+                        ${escapeDonationHTML(
+                            donation.phone
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        <i class="fas fa-credit-card"></i>
+                        Payment
+                    </strong>
+
+                    <span>
+                        ${escapeDonationHTML(
+                            donation.paymentMethod
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        <i class="fas fa-calendar"></i>
+                        Date
+                    </strong>
+
+                    <span>
+                        ${escapeDonationHTML(
+                            donation.date
+                        )}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="donation-types">
+
+                <strong>
+                    Donation Type:
+                </strong>
+
+                <div class="donation-tags">
+
+                    ${donation.types
+                        .map(function(type){
+
+                            return `
+                                <span>
+                                    ${escapeDonationHTML(type)}
+                                </span>
+                            `;
+
+                        })
+                        .join("")}
+
+                </div>
+
+            </div>
+
+
+            ${
+                donation.comments
+                ?
+                `
+                <div class="donation-comments">
+
+                    <strong>
+                        Comments
+                    </strong>
+
+                    <p>
+                        ${escapeDonationHTML(
+                            donation.comments
+                        )}
+                    </p>
+
+                </div>
+                `
+                :
+                ""
+            }
+
+
+            <div class="donation-actions">
+
+                <button
+                    type="button"
+                    class="donation-delete-btn"
+                    onclick="deleteDonation(${donation.id})">
+
+                    <i class="fas fa-trash"></i>
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        donationsContainer.appendChild(
+            donationCard
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+        FORMAT AMOUNT
+========================================== */
+
+function formatDonationAmount(amount){
+
+    const number =
+        Number(amount);
+
+
+    if(isNaN(number)){
+
+        return escapeDonationHTML(
+            amount
+        );
+
+    }
+
+
+    return number.toLocaleString(
+        "en-UG"
+    );
+
+}
+
+
+/* ==========================================
+        DELETE DONATION
+========================================== */
+
+function deleteDonation(id){
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this donation record?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    let donations =
+        getDonations();
+
+
+    donations =
+        donations.filter(
+            function(donation){
+
+                return donation.id !== id;
+
+            }
+        );
+
+
+    localStorage.setItem(
+        "gtvDonations",
+        JSON.stringify(donations)
+    );
+
+
+    renderDonations();
+
+}
+
+
+/* ==========================================
+        VIEW ALL
+========================================== */
+
+viewAllDonationsBtn.addEventListener(
+    "click",
+    function(){
+
+        document
+            .getElementById("donations")
+            .scrollIntoView({
+                behavior:"smooth"
+            });
+
+    }
+);
+
+
+/* ==========================================
+        BASIC HTML SAFETY
+========================================== */
+
+function escapeDonationHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+        LOAD DONATIONS
+========================================== */
+
+renderDonations();
+/* ==========================================
+        VOLUNTEERS
+========================================== */
+
+const volunteersContainer =
+    document.getElementById("volunteersContainer");
+
+const volunteerCount =
+    document.getElementById("volunteerCount");
+
+const volunteerTotalBadge =
+    document.getElementById("volunteerTotalBadge");
+
+const viewAllVolunteersBtn =
+    document.getElementById("viewAllVolunteersBtn");
+
+
+/* ==========================================
+        GET VOLUNTEERS
+========================================== */
+
+function getVolunteers(){
+
+    return JSON.parse(
+        localStorage.getItem("gtvVolunteers")
+    ) || [];
+
+}
+
+
+/* ==========================================
+        DISPLAY VOLUNTEERS
+========================================== */
+
+function renderVolunteers(){
+
+    const volunteers =
+        getVolunteers();
+
+
+    /* TOTAL VOLUNTEERS */
+
+    volunteerCount.textContent =
+        volunteers.length;
+
+
+    /* BADGE */
+
+    if(volunteers.length > 0){
+
+        volunteerTotalBadge.style.display =
+            "inline-block";
+
+        volunteerTotalBadge.textContent =
+            volunteers.length +
+            " application" +
+            (volunteers.length === 1 ? "" : "s");
+
+    }
+
+    else{
+
+        volunteerTotalBadge.style.display =
+            "none";
+
+    }
+
+
+    /* NO APPLICATIONS */
+
+    if(volunteers.length === 0){
+
+        volunteersContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fas fa-user-clock"></i>
+
+                <h3>
+                    No Volunteer Applications Yet
+                </h3>
+
+                <p>
+                    Volunteer applications will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* CLEAR CONTAINER */
+
+    volunteersContainer.innerHTML = "";
+
+
+    /* DISPLAY VOLUNTEERS */
+
+    volunteers.forEach(function(volunteer){
+
+        const volunteerCard =
+            document.createElement("div");
+
+
+        volunteerCard.className =
+            "admin-volunteer-card";
+
+
+        volunteerCard.innerHTML = `
+
+            <div class="volunteer-card-header">
+
+                <div class="volunteer-info">
+
+                    <div class="volunteer-avatar">
+
+                        <i class="fas fa-user"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            ${escapeVolunteerHTML(
+                                volunteer.fullName
+                            )}
+                        </h3>
+
+                        <small>
+                            ${escapeVolunteerHTML(
+                                volunteer.email
+                            )}
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <span class="volunteer-date">
+
+                    ${escapeVolunteerHTML(
+                        volunteer.date
+                    )}
+
+                </span>
+
+            </div>
+
+
+            <div class="volunteer-details">
+
+                <div>
+
+                    <strong>
+
+                        <i class="fas fa-phone"></i>
+
+                        Phone
+
+                    </strong>
+
+                    <span>
+                        ${escapeVolunteerHTML(
+                            volunteer.phone || "Not provided"
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+
+                        <i class="fas fa-briefcase"></i>
+
+                        Occupation
+
+                    </strong>
+
+                    <span>
+                        ${escapeVolunteerHTML(
+                            volunteer.occupation || "Not provided"
+                        )}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="volunteer-motivation">
+
+                <strong>
+
+                    <i class="fas fa-heart"></i>
+
+                    Why they want to volunteer
+
+                </strong>
+
+                <p>
+
+                    ${escapeVolunteerHTML(
+                        volunteer.motivation ||
+                        "No motivation provided."
+                    )}
+
+                </p>
+
+            </div>
+
+
+            <div class="volunteer-actions">
+
+                <button
+                    type="button"
+                    class="volunteer-delete-btn"
+                    onclick="deleteVolunteer(${volunteer.id})">
+
+                    <i class="fas fa-trash"></i>
+
+                    Delete Application
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        volunteersContainer.appendChild(
+            volunteerCard
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+        DELETE VOLUNTEER
+========================================== */
+
+function deleteVolunteer(id){
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this volunteer application?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    let volunteers =
+        getVolunteers();
+
+
+    volunteers =
+        volunteers.filter(
+            function(volunteer){
+
+                return volunteer.id !== id;
+
+            }
+        );
+
+
+    localStorage.setItem(
+        "gtvVolunteers",
+        JSON.stringify(volunteers)
+    );
+
+
+    renderVolunteers();
+
+}
+
+
+/* ==========================================
+        VIEW ALL
+========================================== */
+
+viewAllVolunteersBtn.addEventListener(
+    "click",
+    function(){
+
+        document
+            .getElementById("volunteers")
+            .scrollIntoView({
+                behavior:"smooth"
+            });
+
+    }
+);
+
+
+/* ==========================================
+        HTML SAFETY
+========================================== */
+
+function escapeVolunteerHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+        LOAD VOLUNTEERS
+========================================== */
+
+renderVolunteers();
+
+
+</script>
+
+
+</body>
+
+</html>

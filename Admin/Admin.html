@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GTV Admin | Great Time Victims</title>
+
+<link rel="stylesheet" href="admin.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="admin-login">
+
+    <div class="login-card">
+
+        <!-- LOGO -->
+
+        <div class="login-logo">
+
+            <img src="../images/logo.png" alt="Great Time Victims">
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1>GTV Admin</h1>
+
+        <p class="login-subtitle">
+            Great Time Victims Administration
+        </p>
+
+
+        <!-- LOGIN FORM -->
+
+        <form id="adminLoginForm">
+
+            <div class="input-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <div class="input-box">
+
+                    <i class="fas fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-box">
+
+                    <i class="fas fa-lock"></i>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="login-btn">
+
+                <i class="fas fa-sign-in-alt"></i>
+
+                Login
+
+            </button>
+
+
+            <p id="loginMessage"></p>
+
+        </form>
+
+
+        <!-- BACK TO WEBSITE -->
+
+        <a href="../index.html" class="back-home">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Back to Website
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document
+.getElementById("adminLoginForm")
+.addEventListener("submit", function(event){
+
+    event.preventDefault();
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value.trim();
+
+    const message =
+        document.getElementById("loginMessage");
+
+
+    /*
+        TEMPORARY LOGIN
+        We will replace this with
+        proper secure authentication later.
+    */
+
+    if(username === "admin" && password === "GTV2026"){
+
+        message.style.color = "#232B8B";
+
+        message.textContent = "Login successful...";
+
+        setTimeout(function(){
+
+            window.location.href = "dashboard.html";
+
+        }, 800);
+
+    }
+
+    else{
+
+        message.style.color = "#e91e63";
+
+        message.textContent =
+            "Incorrect username or password.";
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
