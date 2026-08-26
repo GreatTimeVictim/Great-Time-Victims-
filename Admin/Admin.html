@@ -13,6 +13,7 @@
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>   
 
 </head>
 
@@ -118,7 +119,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 
 <script>
+const SUPABASE_URL = "https://yqndrnhrhwoscjkhspev.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vvyJlAJ7ZCZpud4n2sXDgQ_4q0xT85X";
 
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 document
 .getElementById("adminLoginForm")
 .addEventListener("submit", function(event){
@@ -135,34 +142,24 @@ document
         document.getElementById("loginMessage");
 
 
-    /*
-        TEMPORARY LOGIN
-        We will replace this with
-        proper secure authentication later.
-    */
+   supabaseClient.auth.signInWithPassword({
+    email: username,
+    password: password
+})
+.then(({ data, error }) => {
 
-    if(username === "admin" && password === "GTV2026"){
-
-        message.style.color = "#232B8B";
-
-        message.textContent = "Login successful...";
-
-        setTimeout(function(){
-
-            window.location.href = "dashboard.html";
-
-        }, 800);
-
-    }
-
-    else{
-
+    if (error) {
         message.style.color = "#e91e63";
-
-        message.textContent =
-            "Incorrect username or password.";
-
+        message.textContent = "Incorrect email or password.";
+        return;
     }
+
+    message.style.color = "#232B8B";
+    message.textContent = "Login successful...";
+
+    setTimeout(function(){
+        window.location.href = "dashboard.html";
+    }, 800);
 
 });
 
