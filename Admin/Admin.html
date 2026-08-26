@@ -128,7 +128,7 @@ const supabaseClient = window.supabase.createClient(
 );
 document
 .getElementById("adminLoginForm")
-.addEventListener("submit", function(event){
+.addEventListener("submit", async function(event) {
 
     event.preventDefault();
 
@@ -141,30 +141,31 @@ document
     const message =
         document.getElementById("loginMessage");
 
+    message.textContent = "Logging in...";
+    message.style.color = "#232B8B";
 
-   supabaseClient.auth.signInWithPassword({
-    email: username,
-    password: password
-})
-.then(({ data, error }) => {
+    const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+            email: username,
+            password: password
+        });
 
     if (error) {
         message.style.color = "#e91e63";
         message.textContent = "Incorrect email or password.";
+        console.error(error);
         return;
     }
 
     message.style.color = "#232B8B";
     message.textContent = "Login successful...";
 
-    setTimeout(function(){
+    setTimeout(function() {
         window.location.href = "dashboard.html";
     }, 800);
 
 });
-
-</script>
-
+ </script>
 </body>
 
 </html>
